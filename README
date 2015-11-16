@@ -1,7 +1,0 @@
-## To build...
-
-From `c_module` folder, run `node-gyp build`.
-
-## To run...
-
-From the root folder, run `node perf.js`.

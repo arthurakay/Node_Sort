@@ -42,7 +42,7 @@ function return_JS_AverageTime(size) {
 
     avg = totalTime / runs;
 
-    console.log('JS  Merge sort on ' + size + ' items took an average of ' + avg + ' seconds (' + runs + ' runs).');
+    console.log('JS  Merge sort on ' + size + ' items took an average of ' + (avg * 1000) + ' ms (' + runs + ' runs).');
 
     return avg;
 }
@@ -74,7 +74,7 @@ function return_C_AverageTime(size) {
 
     avg = totalTime / runs;
 
-    console.log('C++ Merge sort on ' + size + ' items took an average of ' + avg + ' seconds (' + runs + ' runs).');
+    console.log('C++ Merge sort on ' + size + ' items took an average of ' + (avg * 1000) + ' ms (' + runs + ' runs).');
 
     return avg;
 }

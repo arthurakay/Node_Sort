@@ -1,5 +1,11 @@
 #include <node.h>
 #include <math.h>
+#include <vector>
+#include <iostream>
+#include <string>
+
+using namespace v8;
+using namespace std;
 
 namespace demo {
 
@@ -10,16 +16,17 @@ namespace demo {
     using v8::String;
     using v8::Value;
 
-    void merge(int *array, int low, int mid, int high) {
+    std::vector<int> merge(std::vector<int> array, int low, int mid, int high) {
         int i = low;
+
         int j = mid + 1;
         int k;
 
-        int temp[high];
+        std::vector<int> temp(sizeof(array));
 
         //copy values into temporary array
         for (k = low; k <= high; k++) {
-            temp[k] = array[k];
+            temp[ k ] = array[ k ];
         }
 
         //merge sorted values back into original array
@@ -38,30 +45,47 @@ namespace demo {
                 array[ k ] = temp[ i++ ];
             }
         }
+
+        return array;
     }
 
-    void sort (int *array, int low, int high) {
+    std::vector<int> sort (std::vector<int> array, int low, int high) {
         if (high <= low) {
-            return;
+            return array;
         }
 
         int mid = floor(low + (high - low) / 2);
 
-        sort(array, low, mid);
-        sort(array, mid + 1, high);
+        array = sort(array, low, mid);
+        array = sort(array, mid + 1, high);
 
-        merge(array, low, mid, high);
+        array = merge(array, low, mid, high);
+
+        return array;
     }
 
     void Method(const FunctionCallbackInfo<Value>& args) {
         Isolate* isolate = args.GetIsolate();
 
-        int* inputArray = args[0];
-        //Local<v8::Array> inputArray = args[0]->ToObject().As<v8::Array>();
+        // Unpack JS array into a std::vector
+        std::vector<int> values;
+        Local<Array> input = Local<Array>::Cast(args[0]);
+        unsigned int numValues = input->Length();
 
-        sort(inputArray, 0, sizeof(inputArray) - 1);
+        for (unsigned int i = 0; i < numValues; i++) {
+            values.push_back(input->Get(i)->NumberValue());
+        }
 
-        args.GetReturnValue().Set(inputArray);
+        values = sort(values, 0, int(values.size() - 1));
+
+        // Create a new JS array from the vector.
+        Local<Array> result = Array::New(isolate);
+        for (unsigned int x = 0; x < numValues; x++ ) {
+            result->Set(x, Number::New(isolate, values[x]));
+        }
+
+        // Return it.
+        args.GetReturnValue().Set(result);
     }
 
     void init(Local<Object> exports) {

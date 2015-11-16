@@ -326,8 +326,8 @@ ifeq ($(strip $(foreach prefix,$(NO_LOAD),\
 endif
 
 quiet_cmd_regen_makefile = ACTION Regenerating $@
-cmd_regen_makefile = cd $(srcdir); /usr/local/lib/node_modules/node-gyp/gyp/gyp_main.py -fmake --ignore-environment "--toplevel-dir=." -I/Users/arthurakay/www/akawebdesign/perf/c_module/build/config.gypi -I/usr/local/lib/node_modules/node-gyp/addon.gypi -I/Users/arthurakay/.node-gyp/4.0.0/include/node/common.gypi "--depth=." "-Goutput_dir=." "--generator-output=build" "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/Users/arthurakay/.node-gyp/4.0.0" "-Dnode_gyp_dir=/usr/local/lib/node_modules/node-gyp" "-Dnode_lib_file=node.lib" "-Dmodule_root_dir=/Users/arthurakay/www/akawebdesign/perf/c_module" binding.gyp
-Makefile: $(srcdir)/../../../../../../usr/local/lib/node_modules/node-gyp/addon.gypi $(srcdir)/build/config.gypi $(srcdir)/binding.gyp $(srcdir)/../../../../.node-gyp/4.0.0/include/node/common.gypi
+cmd_regen_makefile = cd $(srcdir); /usr/local/lib/node_modules/node-gyp/gyp/gyp_main.py -fmake --ignore-environment "--toplevel-dir=." -I/Users/arthurakay/www/akawebdesign/perf/c_module/build/config.gypi -I/usr/local/lib/node_modules/node-gyp/addon.gypi -I/Users/arthurakay/.node-gyp/0.12.0/common.gypi "--depth=." "-Goutput_dir=." "--generator-output=build" "-Dlibrary=shared_library" "-Dvisibility=default" "-Dnode_root_dir=/Users/arthurakay/.node-gyp/0.12.0" "-Dnode_gyp_dir=/usr/local/lib/node_modules/node-gyp" "-Dnode_lib_file=node.lib" "-Dmodule_root_dir=/Users/arthurakay/www/akawebdesign/perf/c_module" binding.gyp
+Makefile: $(srcdir)/../../../../../../usr/local/lib/node_modules/node-gyp/addon.gypi $(srcdir)/../../../../.node-gyp/0.12.0/common.gypi $(srcdir)/build/config.gypi $(srcdir)/binding.gyp
 	$(call do_cmd,regen_makefile)
 
 # "all" is a concatenation of the "all" targets from all the included

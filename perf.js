@@ -1,7 +1,9 @@
 var js_sort = require('./sort.js'),
-    c_sort = require('./c_module/build/Release/addon.node');
+    c_sort  = require('./c_module/build/Release/addon.node');
 
 var JS_AVG, CPP_AVG;
+
+var RUNS = 100;
 
 function calculateWinner(num) {
     var pct;
@@ -33,72 +35,54 @@ function createArray(length) {
         i++;
     }
 
-    //console.log(`Array: ${randomArray.join(',')}`);;
     return randomArray;
+}
+
+function reportTimeonRun(size, sortMethod) {
+    var currentArray,
+        start, timeDiff;
+
+    currentArray = createArray(size);
+
+    start = process.hrtime();
+    sortMethod(currentArray);
+    timeDiff = process.hrtime(start);
+
+    //convert result to a floating point number
+    return parseFloat("" + timeDiff[ 0 ] + (timeDiff[ 1 ] / 1e+9));
 }
 
 function return_JS_AverageTime(size) {
     var totalTime = 0,
-        runs  = 100,
-        i     = 0,
+        i         = 0,
 
-        currentArray,
-        sortedArray,
-        start, timeDiff,
         avg;
 
-    for (i; i < runs; i++) {
-        currentArray = createArray(size);
-
-        //console.log(currentArray);
-
-        start = process.hrtime();
-        sortedArray = js_sort.mergeSort(currentArray);
-        timeDiff = process.hrtime(start);
-
-        //convert result to a floating point number
-        totalTime += parseFloat("" + timeDiff[ 0 ] + (timeDiff[1] / 1e+9));
-
-        //console.log(sortedArray);
+    for (i; i < RUNS; i++) {
+        totalTime += reportTimeonRun(size, js_sort.mergeSort);
     }
 
-    avg = totalTime / runs;
+    avg = totalTime / RUNS;
     JS_AVG = avg;
 
-    console.log('JS  Merge sort on ' + size + ' items took an average of ' + (avg * 1000) + ' ms (' + runs + ' runs).');
+    console.log('JS  Merge sort on ' + size + ' items took an average of ' + (avg * 1000) + ' ms (' + RUNS + ' runs).');
 
     return avg;
 }
 
 function return_C_AverageTime(size) {
     var totalTime = 0,
-        runs  = 100,
-        i     = 0,
-
-        currentArray,
-        sortedArray,
-        start, timeDiff,
+        i         = 0,
         avg;
 
-    for (i; i < runs; i++) {
-        currentArray = createArray(size);
-
-        //console.log(currentArray);
-
-        start = process.hrtime();
-        sortedArray = c_sort.mergeSort(currentArray);
-        timeDiff = process.hrtime(start);
-
-        //convert result to a floating point number
-        totalTime += parseFloat("" + timeDiff[ 0 ] + (timeDiff[1] / 1e+9));
-
-        //console.log(sortedArray);
+    for (i; i < RUNS; i++) {
+        totalTime += reportTimeonRun(size, c_sort.mergeSort);
     }
 
-    avg = totalTime / runs;
+    avg = totalTime / RUNS;
     CPP_AVG = avg;
 
-    console.log('C++ Merge sort on ' + size + ' items took an average of ' + (avg * 1000) + ' ms (' + runs + ' runs).');
+    console.log('C++ Merge sort on ' + size + ' items took an average of ' + (avg * 1000) + ' ms (' + RUNS + ' runs).');
 
     return avg;
 }

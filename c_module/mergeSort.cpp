@@ -16,40 +16,41 @@ namespace demo {
     using v8::String;
     using v8::Value;
 
-    std::vector<int> merge(std::vector<int> array, int low, int mid, int high) {
+    Local<Array> merge(Local<Array> array, int low, int mid, int high) {
         int i = low;
 
         int j = mid + 1;
         int k;
 
-        std::vector<int> temp(sizeof(array));
+        Isolate* isolate = Isolate::GetCurrent();
+        Local<Array> temp = Array::New(isolate, array->Length());
 
         //copy values into temporary array
         for (k = low; k <= high; k++) {
-            temp[ k ] = array[ k ];
+            temp->Set(k, array->Get(k));
         }
 
         //merge sorted values back into original array
         for (k = low; k <= high; k++) {
 
             if (i > mid) {
-                array[ k ] = temp[ j++ ];
+                array->Set(k, temp->Get(j++));
             }
             else if (j > high) {
-                array[ k ] = temp[ i++ ];
+                array->Set(k, temp->Get(i++));
             }
-            else if (int(temp[ j ]) < int(temp[ i ])) {
-                array[ k ] = temp[ j++ ];
+            else if (temp->Get(j)->NumberValue() < temp->Get(i)->NumberValue()) {
+                array->Set(k, temp->Get(j++));
             }
             else {
-                array[ k ] = temp[ i++ ];
+                array->Set(k, temp->Get(i++));
             }
         }
 
         return array;
     }
 
-    std::vector<int> sort (std::vector<int> array, int low, int high) {
+    Local<Array> sort (Local<Array> array, int low, int high) {
         if (high <= low) {
             return array;
         }
@@ -65,27 +66,17 @@ namespace demo {
     }
 
     void Method(const FunctionCallbackInfo<Value>& args) {
-        Isolate* isolate = args.GetIsolate();
-
-        // Unpack JS array into a std::vector
-        std::vector<int> values;
         Local<Array> input = Local<Array>::Cast(args[0]);
-        unsigned int numValues = input->Length();
+        int numValues = input->Length();
 
-        for (unsigned int i = 0; i < numValues; i++) {
-            values.push_back(input->Get(i)->NumberValue());
-        }
-
-        values = sort(values, 0, int(values.size() - 1));
-
-        // Create a new JS array from the vector.
-        Local<Array> result = Array::New(isolate);
-        for (unsigned int x = 0; x < numValues; x++ ) {
-            result->Set(x, Number::New(isolate, values[x]));
-        }
+        input = sort(
+            input,
+            0,
+            (numValues - 1)
+        );
 
         // Return it.
-        args.GetReturnValue().Set(result);
+        args.GetReturnValue().Set(input);
     }
 
     void init(Local<Object> exports) {

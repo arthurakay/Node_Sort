@@ -3,7 +3,7 @@ var js_sort = require('./sort.js'),
 
 var JS_AVG, CPP_AVG;
 
-var RUNS = 100;
+var RUNS = 10;
 
 function calculateWinner(num) {
     var pct;
@@ -40,13 +40,20 @@ function createArray(length) {
 
 function reportTimeonRun(size, sortMethod) {
     var currentArray,
+        sortedArray,
         start, timeDiff;
 
     currentArray = createArray(size);
 
+    //confirm the array is randomized
+    //console.log(currentArray);
+
     start = process.hrtime();
-    sortMethod(currentArray);
+    sortedArray = sortMethod(currentArray);
     timeDiff = process.hrtime(start);
+
+    //confirm the array is sorted
+    //console.log(sortedArray);
 
     //convert result to a floating point number
     return parseFloat("" + timeDiff[ 0 ] + (timeDiff[ 1 ] / 1e+9));
@@ -55,7 +62,6 @@ function reportTimeonRun(size, sortMethod) {
 function return_JS_AverageTime(size) {
     var totalTime = 0,
         i         = 0,
-
         avg;
 
     for (i; i < RUNS; i++) {
@@ -103,7 +109,10 @@ return_JS_AverageTime(num);
 return_C_AverageTime(num);
 calculateWinner(num);
 
-num = 10000;
-return_JS_AverageTime(num);
-return_C_AverageTime(num);
-calculateWinner(num);
+/**
+ * TODO: this seems to hang on C++... not sure why
+ */
+//num = 10000;
+//return_JS_AverageTime(num);
+//return_C_AverageTime(num);
+//calculateWinner(num);
